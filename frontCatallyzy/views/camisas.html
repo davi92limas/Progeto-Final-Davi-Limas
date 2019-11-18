@@ -1,0 +1,107 @@
+<div>
+    <div>
+        <div style="margin-top: 10px; margin-bottom: 20px;">
+            <h3 style="text-align: center">{{tituloApp}}</h3>
+        </div>
+        <!--------minha pesquisa-->
+        <input type="text" ng-model="criterioDeBusca" placeholder="O que você deseja buscar?" class="form-control">
+
+        <div class="alert-danger">{{mensagemDeErro}}</div>
+        <table class="table table-dark" ng-show="camisas.length">
+            <thead>
+                <th>Cód.</th>
+                <th><a href="" ng-click="ordenarPor('descricao')">Descricao</a> </th>
+                <th><a href="" ng-click="ordenarPor('proco.nome')">Preço</a></th>
+                <th><a href="" ng-click="ordenarPor('marca.nome')">Marca</a></th>
+                <th>Ações</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="chamarCamisa in camisas | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao"
+                    ng-class="{'cor-linha negrito': chamarCamisa.selecionado}">
+                    <td style="width: 5%">{{chamarCamisa.idCamisa}}</td>
+                    <td title="{{chamarCamisa.descricao | name}}">{{chamarCamisa.descricao}}</td>
+                    <td title="{{chamarCamisa.preco}}">{{chamarCamisa.preco}}</td>
+                    <td>{{chamarCamisa.marca.nome}}</td>
+                    <td>
+                        <a href="" ng-click="removerCamisa(chamarCamisa)"><span style="padding: 3px;" title="Remover camisa"
+                                class="fa fa-trash"></span></a>
+                        <a href="" ng-click="editarCamisa(chamarCamisa)"><span style="padding: 3px;" title="Editar camisa"
+                                class="fa fa-pencil" data-toggle="modal" data-target="#camisaModal"></span></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h5 style="text-align: center" ng-show="!camisas.length">Não existem Camisas a serem demonstrados. Clique em
+            'Nova
+            Camisa' para adicionar!</h5>
+        <!----------------aqui vai o botao -->
+        <form class="form-inline">
+            <div class="form-row align-items-center">
+                <button ng-click="camisa = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal"
+                    data-target="#camisaModal">
+                    Nova Camisa
+                </button>
+            </div>
+        </form>
+
+        <!-- Modal -->
+        <div class="modal fade" id="camisaModal" tabindex="-1" role="dialog" aria-labelledby="camisaModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="camisaModalLabel">{{!camisa.idCamisa ? 'Adicionando camisa' :
+                            'Editando
+                            camisa'}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="camisaForm" name="camisaForm">
+                            <textarea ng-model="camisa.descricao" ng-maxlength="100" ng-minlength="5" class="form-control"
+                                type="text" name="descricao" id="descricao" placeholder="Descrição"></textarea>
+
+                            <input ng-model="camisa.modelo" ng-maxlength="50" class="form-control" type="text" name="modelo"
+                                id="modelo" placeholder="Modelo">
+
+                            <input ng-model="camisa.preco" ng-maxlength="6" class="form-control" type="text" name="preco"
+                                id="preco" placeholder="preco">
+
+                            <select id="camisas" class="custom-select" ng-model="camisa.tamanho" ng-required="true">
+                                <option value="">Selecione o tamanho </option>
+                                <option value="p">P</option>
+                                <option value="m">M</option>
+                                <option value="g">G</option>
+                                <option value="gg">GG</option>
+                                </option>
+                            </select>
+
+                            <select id="marcas" class="custom-select" ng-model="camisa.marca" ng-required="true">
+                                <option value="">Selecione a Marca </option>
+                                <option ng-repeat="marca in marcas | orderBy:'nome'" ng-value="marca" ng-selected="camisa.marca.idMarca === marca.idMarca">
+                                    {{marca.nome}}
+                                </option>
+                            </select>
+                        </form>
+
+                        <div ng-messages="camisaForm.descricao.$error" ng-show="camisaForm.descricao.$dirty">
+                            <div ng-message="required" class="alert alert-danger">
+                                Preencha o campo Descriçao!
+                            </div>
+
+                            <div ng-message="minlength" class="alert alert-danger">
+                                O campo descriçao deve possuir no minimo 5 caracteres!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" ng-click="adicionarCamisa(camisa)" ng-disabled="camisaForm.$invalid"
+                            data-dismiss="modal">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,120 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <!--------minha pesquisa-->
+    <input type="text" ng-model="criterioDeBusca" placeholder="O que você deseja buscar?" class="form-control">
+
+
+    <h5 style="text-align: center" ng-show="!funcionarios.length">Não existem funcionarios a serem demonstrados. Clique
+        em 'Novo funcionario' para adicionar!</h5>
+    <table class="table table-dark">
+        <tr>
+            
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('idFuncionario')">Cod.</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('nome')">Nome</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('cpf')">cpf</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('email')">email</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('telefone')">Telefone</a></th>
+            <th><a class="seta" style="text-decoration: none">Data de cadastro</a></th>
+            <th><a class="seta" style="text-decoration: none">Ações</a></th>
+        </tr>
+        <tr ng-class="{selecionado: funcionario.selecionado}" ng-repeat="funcionario in funcionarios | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+            
+            <td>{{funcionario.idFuncionario}}</td>
+            <td>{{funcionario.nome | name | ellipsis:15}}</td>
+            <td>{{funcionario.cpf}}</td>
+            <td>{{funcionario.email}}</td>
+            <td>{{funcionario.telefone}}</td>
+            <td>{{funcionario.dataCadastro | date:'dd/MM/yyyy'}}</td>
+
+            <td>
+                <a ng-click="editarFuncionario(funcionario)" data-toggle="modal" data-target="#funcionarioModal"><span
+                        title="Editar funcionario" class="fa fa-pencil"></span></a>
+
+           
+            </td>
+        </tr>
+    </table>
+
+    <!-----botao de add-->
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="funcionario = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal"
+                data-target="#funcionarioModal">
+                Novo funcionario
+            </button>
+        </div>
+    </form>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="funcionarioModal" tabindex="-1" role="dialog" aria-labelledby="funcionarioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="funcionarioModalLabel">{{!funcionario.idFuncionario ? 'Adicionando
+                        funcionario' : 'Editando funcionario'}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div ng-if="!(funcionarios | filter:criterioDeBusca).length" class="formata-texto">
+                        Nenhum funcionario na lista
+                    </div>
+
+                    <h3 class="titulo">{{app}}</h3>
+                    <ui-alert ng-if="mensagemErro && mensagemErro != ''" titulo="Ocorreu um problema!">
+                        {{mensagemDeErro}}
+                    </ui-alert>
+                    <form name="funcionarioForm">
+
+                        <div class="campo">Nome do funcionario</div>
+                        <input name="nome" class="input-block-level" type="text" ng-model="funcionario.nome"
+                            placeholder="Nome" ng-required="true" ng-minlength="3"></input>
+
+                        <input name="cpf" class="input-block-level" type="text" ng-model="funcionario.cpf" placeholder="cpf"
+                            ng-required="true" ng-minlength="3"></input>
+
+                        <input name="email" class="input-block-level" type="text" ng-model="funcionario.email"
+                            placeholder="email" ng-required="true" ng-minlength="3"></input>
+
+                        <div ng-messages="funcionarioForm.nome.$dirty && funcionarioForm.nome.$error">
+                            <div ng-message="required" class="alert alert-danger">
+                                Por favor, preencha o nome!
+                            </div>
+                            <div ng-message="minlength" class="alert alert-danger">
+                                O nome deve ter pelo menos 3 caracteres!
+                            </div>
+                        </div>
+
+                        <div class="campo">Telefone do funcionario</div>
+                        <input name="telefone" class="input-block-level" type="text" ng-model="funcionario.telefone"
+                            placeholder="Telefone" ng-required="true" ng-pattern="/^\d{12}$/"></input>
+                        <div ng-messages="funcionarioForm.telefone.$dirty && funcionarioForm.telefone.$error">
+                            <div ng-message="required" class="alert alert-danger">
+                                Por favor, preencha o telefone!
+                            </div>
+                            <div ng-message="pattern" class="alert alert-danger">
+                                O telefone deve ter o formato 000000000000!
+                            </div>
+                        </div>
+
+                        <div class="campo">Data de cadastro</div>
+                        <input type="date" name="dataCadastro" class="input-block-level" placeholder="Data de cadastro"
+                            ng-required="true" ng-model="funcionario.dataCadastro">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="adicionarFuncionario(funcionario)"
+                        ng-disabled="funcionarioForm.$invalid" data-dismiss="modal">Salvar funcionario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

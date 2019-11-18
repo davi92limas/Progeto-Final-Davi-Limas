@@ -1,0 +1,130 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <!--------minha pesquisa-->
+    <input type="text" ng-model="criterioDeBusca" placeholder="O que você deseja buscar?" class="form-control">
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table table-dark">
+        <tr>
+            <th></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('idVenda')">Cod.</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('cliente.nome')">Cliente</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('funcionario.nome')">Funcionario</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('camisa1.nome')">camisa 1</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('camisa2.nome')">camisa 2</a></th>
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('camisa3.nome')">camisa 3</a></th>
+
+
+            <th><a class="clicar" style="text-decoration: none" ng-click="ordenarPor('camisa3.nome')">Total</a></th>
+
+            <th><a class="seta" style="text-decoration: none">Data da venda</a></th>
+            <th><a class="seta" style="text-decoration: none">Ações</a></th>
+        </tr>
+        <tr ng-class="{selecionado: venda.selecionado}" ng-repeat="venda in vendas | filter:criterioDeBusca | orderBy:criterioDeOrdenacao:direcaoDaOrdenacao">
+                <td><input type="checkbox" ng-model="venda.selecionado"></td>
+            <td>{{venda.idVenda}}</td>
+            <td>{{venda.cliente.nome}}</td>
+            <td>{{venda.funcionario.nome}}</td>
+            <td>{{venda.camisa1.descricao}}</td>
+            <td>{{venda.camisa2.descricao}}</td>
+            <td>{{venda.camisa3.descricao}}</td>
+            <td>{{venda.totalVenda}}</td>
+            <td>{{venda.dataVenda | date:'dd/MM/yyyy'}}</td>
+            <td>
+                    
+
+                    <a href="" ng-click="editarVenda(venda)" ng-disabled="!isVendaSelecionado(vendas)"><span style="padding: 3px;" title="Editar venda" class="fa fa-pencil"
+                    data-toggle="modal" data-target="#vendaModal"></span></a>
+            </td>
+
+
+           
+        </tr>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!vendas.length">Não existem vendas a serem demonstradas. Clique em '
+        Venda' para adicionar!</h5>
+
+    <!----botao add vendas -->
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="venda = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal"
+                data-target="#vendaModal">
+                Nova Venda
+            </button>
+        </div>
+    </form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="vendaModal" tabindex="-1" role="dialog" aria-labelledby="vendaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vendaModalLabel">{{!venda.idVenda ? 'Adicionando venda' : 'Editando
+                        venda'}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form name="vendaForm" name="vendaForm">
+                        <div class="campo">Cliente</div>
+                        <select class="input-block-level" ng-model="venda.cliente" ng-required="true">
+                            <option value="">Selecione um cliente...</option>
+                            <option ng-repeat="cliente in clientes" ng-selected="venda.cliente.nome == cliente.nome"
+                                ng-value="cliente">{{cliente.idCliente
+                                + ' - ' + cliente.nome}}</option>
+                        </select>
+
+                        <div class="campo">Funcionário</div>
+                        <select class="input-block-level" ng-model="venda.funcionario" ng-required="true">
+                            <option value="">Selecione um funcionário...</option>
+                            <option ng-repeat="funcionario in funcionarios" ng-selected="venda.funcionario.nome == funcionario.nome"
+                                ng-value="funcionario">{{funcionario.idFuncionario + ' - ' + funcionario.nome}}</option>
+                        </select>
+
+                        <div class="campo">Camisa </div>
+                        <select class="input-block-level" ng-model="venda.camisa1" ng-required="true" ng-change="totalizarVenda(venda)">
+                            <option value="">Selecione uma camisa...</option>
+                            <option ng-repeat="camisa in camisas" ng-selected="venda.camisa1.descricao == camisa.descricao"
+                                ng-value="camisa">{{camisa.idCamisa
+                                + ' - ' + camisa.descricao}}</option>
+                        </select>
+
+                        <div class="campo">Camisa 2 </div>
+                        <select class="input-block-level" ng-model="venda.camisa2" ng-change="totalizarVenda(venda)">
+                            <option value="">Selecione uma camisa...</option>
+                            <option ng-repeat="camisa in camisas" ng-selected="venda.camisa2.descricao == camisa.descricao"
+                                ng-value="camisa">{{camisa.idCamisa
+                                + ' - ' + camisa.descricao}}</option>
+                        </select>
+
+                        <div class="campo">Camisa 3 </div>
+                        <select class="input-block-level" ng-model="venda.camisa3" ng-change="totalizarVenda(venda)">
+                            <option value="">Selecione uma camisa...</option>
+                            <option ng-repeat="camisa in camisas" ng-selected="venda.camisa3.descricao == camisa.descricao"
+                                ng-value="camisa">{{camisa.idCamisa
+                                + ' - ' + camisa.descricao}}</option>
+                        </select>
+
+                        <div class="campo">Data da venda</div>
+                        <input type="date" name="dataVenda" class="input-block-level" placeholder="Data da venda"
+                            ng-required="true" ng-model="venda.dataVenda">
+
+                        <br><br>
+                        <label>Total Venda: </label> {{venda.totalVenda}}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="salvarVenda(venda)" ng-disabled="vendaForm.$invalid"
+                        data-dismiss="modal">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

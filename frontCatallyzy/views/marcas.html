@@ -1,0 +1,79 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <!--------minha pesquisa-->
+    <input type="text" ng-model="criterioDeBusca" placeholder="O que você deseja buscar?" class="form-control">
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table table-dark" ng-show="marcas.length">
+        <thead>
+            <th style="width: 5%"><a href="" ng-click="ordenarPor('idMarca')">Cód.</a></th>
+            <th><a href="" ng-click="ordenarPor('nome')">Nome Da Marca</a> </th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="elemento in marcas | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao"
+                ng-class="{'cor-linha negrito': elemento.selecionado}">
+                <td style="width: 5%">{{elemento.idMarca}}</td>
+                <td title="{{elemento.nome | name}}">{{elemento.nome}}</td>
+                <td>
+
+
+                    <a href="" ng-click="editarMarca(elemento)"><span style="padding: 3px;" title="Editar marca" class="fa fa-pencil"
+                            data-toggle="modal" data-target="#marcaModal"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!marcas.length">Não existem marcas a serem demonstradas. Clique em 'Nova
+        Marca' para adicionar!</h5>
+
+    <!----botao add marcas -->
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="marca = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal"
+                data-target="#marcaModal">
+                Nova Marca
+            </button>
+        </div>
+    </form>
+
+    <!-- Modal -->
+    <div class="modal fade" id="marcaModal" tabindex="-1" role="dialog" aria-labelledby="marcaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="marcaModalLabel">{{!marca.idMarca ? 'Adicionando marca' : 'Editando
+                        marca'}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="marcaForm" name="marcaForm">
+                        <input ng-model="marca.nome" ng-required="true" ng-minlength="3" class="form-control" type="text"
+                            name="nome" id="nome" placeholder="Nome">
+                    </form>
+
+                    <div ng-messages="marcaForm.nome.$error" ng-show="marcaForm.nome.$dirty">
+                        <div ng-message="required" class="alert alert-danger">
+                            Preencha o campo nome!
+                        </div>
+
+                        <div ng-message="minlength" class="alert alert-danger">
+                            O campo nome deve possuir no minimo 3 caracteres!
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="adicionarMarca(marca)" ng-disabled="marcaForm.$invalid"
+                        data-dismiss="modal">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
